@@ -16,7 +16,9 @@ import {
   ChevronRight,
   GraduationCap,
   Maximize2,
-  Minimize2
+  Minimize2,
+  ArrowUp,
+  ArrowLeft
 } from 'lucide-react';
 
 // --- Types ---
@@ -278,9 +280,9 @@ const ThesisRunner = () => {
   });
 
   const chars = {
-    komal: { emoji: '👩‍🔬', name: 'KOMAL', color: '#ec4899', jumpPower: 12, shield: false, role: 'Crime Scene Expert' },
-    diksha: { emoji: '🕵️‍♀️', name: 'DIKSHA', color: '#f43f5e', jumpPower: 14, shield: false, role: 'Forensic Analyst' },
-    sargam: { emoji: '👩‍🔬', name: 'SARGAM', color: '#ff7eb9', jumpPower: 12, shield: true, role: 'DNA Specialist' },
+    komal: { emoji: '👩‍🔬', name: 'KOMAL', color: '#ec4899', jumpPower: 12, shield: false, role: 'forensic Expert' },
+    diksha: { emoji: '🕵️‍♀️', name: 'DIKSHA', color: '#f43f5e', jumpPower: 14, shield: false, role: 'forensic Analyst' },
+    sargam: { emoji: '👩‍🔬', name: 'SARGAM', color: '#ff7eb9', jumpPower: 12, shield: true, role: 'forensic Specialist' },
   };
 
   const toggleFullScreen = () => {
@@ -711,9 +713,9 @@ const BalloonGame = () => {
 };
 const MemoryReveal = () => {
   const memories = [
-    { text: "Even 2 minutes with you made stressful days lighter", img: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&q=80&w=800" },
-    { text: "Your taanas felt like blessings in disguise", img: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800" },
-    { text: "You made college feel like home for all of us", img: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800" }
+    { text: "Even 2 minutes with you made stressful days lighter", img: "https://lh3.googleusercontent.com/d/1FiIMlJUArQ65FwmGIdI_XA93LRdhe_ll?auto=format&fit=crop&q=80&w=800" },
+    { text: "Your taanas felt like blessings in disguise", img: "https://lh3.googleusercontent.com/d/1ueAfzxCbLnDX1OePGzBGUU7VpYT9ntUb?auto=format&fit=crop&q=80&w=800" },
+    { text: "You made college feel like home for all of us", img: "https://lh3.googleusercontent.com/d/1H3QMhT8rnDG7ylpxn4jiGM9vbjF49QgH?auto=format&fit=crop&q=80&w=800" }
   ];
 
   return (
@@ -764,6 +766,7 @@ const QuoteGame = () => {
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [isFinished, setIsFinished] = useState(false);
 
   const handleSelect = (opt: string) => {
     setSelected(opt);
@@ -776,69 +779,103 @@ const QuoteGame = () => {
           setCurrent(c => c + 1);
           setSelected(null);
           setIsCorrect(null);
+        } else {
+          setIsFinished(true);
         }
       }, 1500);
     }
   };
 
+  const restart = () => {
+    setCurrent(0);
+    setSelected(null);
+    setIsCorrect(null);
+    setIsFinished(false);
+  };
+
   return (
     <section className="py-24 px-4" id="quotes">
-      <div className="max-w-3xl mx-auto glass p-12 rounded-[40px] text-center shadow-2xl">
-        <h2 className="text-2xl font-bold text-white mb-8 glow-text tracking-widest uppercase">Guess Who Said This?</h2>
-        
+      <div className="max-w-3xl mx-auto glass p-12 rounded-[40px] text-center shadow-2xl relative overflow-hidden">
         <AnimatePresence mode="wait">
-          <motion.div 
-            key={current}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="mb-12"
-          >
-            <blockquote className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-300 mb-8 leading-tight glow-text">
-              "{quotes[current].text}"
-            </blockquote>
-            
-            <div className="grid gap-4 mt-8">
-              {quotes[current].options.map((opt, i) => (
-                <button
-                  key={i}
-                  disabled={selected !== null}
-                  onClick={() => handleSelect(opt)}
-                  className={`py-4 px-6 rounded-2xl border transition-all uppercase tracking-widest text-xs font-bold ${
-                    selected === opt 
-                      ? isCorrect ? 'bg-pink-500/40 border-pink-500 text-white' : 'bg-red-500/40 border-red-500 text-white'
-                      : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10 hover:border-white/20'
-                  }`}
+          {!isFinished ? (
+            <motion.div key="game">
+              <h2 className="text-2xl font-bold text-white mb-8 glow-text tracking-widest uppercase">Guess Who Said This?</h2>
+              <AnimatePresence mode="wait">
+                <motion.div 
+                  key={current}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="mb-12"
                 >
-                  {opt}
-                </button>
-              ))}
-            </div>
-          </motion.div>
-        </AnimatePresence>
+                  <blockquote className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-300 mb-8 leading-tight glow-text min-h-[120px] flex items-center justify-center">
+                    "{quotes[current].text}"
+                  </blockquote>
+                  
+                  <div className="grid gap-4 mt-8">
+                    {quotes[current].options.map((opt, i) => (
+                      <button
+                        key={i}
+                        disabled={selected !== null}
+                        onClick={() => handleSelect(opt)}
+                        className={`py-4 px-6 rounded-2xl border transition-all uppercase tracking-widest text-xs font-bold ${
+                          selected === opt 
+                            ? isCorrect ? 'bg-pink-500/40 border-pink-500 text-white' : 'bg-red-500/40 border-red-500 text-white'
+                            : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10 hover:border-white/20'
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
 
-        {isCorrect && (
-          <motion.div 
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="flex items-center justify-center gap-2 text-pink-300 font-bold text-[10px] uppercase tracking-widest mt-4"
-          >
-            <ChevronRight size={16} /> Spot On! Moving next...
-          </motion.div>
-        )}
+              {isCorrect && (
+                <motion.div 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="flex items-center justify-center gap-2 text-pink-300 font-bold text-[10px] uppercase tracking-widest mt-4"
+                >
+                  <ChevronRight size={16} /> Spot On! Moving next...
+                </motion.div>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="result"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="py-12"
+            >
+              <div className="w-20 h-20 rounded-full bg-pink-500/20 flex items-center justify-center mx-auto mb-8 border border-pink-500/40">
+                <Heart size={40} className="text-pink-500 fill-pink-500" />
+              </div>
+              <h2 className="text-4xl font-black text-white mb-6 uppercase tracking-tighter glow-text italic">Legendary Memory!</h2>
+              <p className="text-white/60 font-serif italic text-xl mb-12">"You know our legends better than anyone else."</p>
+              <button 
+                onClick={restart}
+                className="px-10 py-4 btn-primary-gradient rounded-full text-white font-bold uppercase tracking-widest text-xs hover:scale-105 transition-transform flex items-center gap-3 mx-auto"
+              >
+                <ArrowLeft size={16} /> Start Over
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );
 };
 
 const PhotoWall = () => {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const galleryImages = [
-    "https://picsum.photos/seed/college0/600/800",
-    "https://picsum.photos/seed/college1/600/800",
-    "https://picsum.photos/seed/college2/600/800",
-    "https://picsum.photos/seed/college3/600/800",
-    "https://picsum.photos/seed/college4/600/800",
-    "https://picsum.photos/seed/college5/600/800",
+    "https://lh3.googleusercontent.com/d/1EudLPNy5zVOOCKX1H_s--xaQxgmTyYIN",
+    "https://lh3.googleusercontent.com/d/1DlXVpODiqlch7dEK9G2gVpTiEsDrpeHg",
+    "https://lh3.googleusercontent.com/d/1OwuW56nkkhrSqGEPPfRNWd9EsQebojbD",
+    "https://lh3.googleusercontent.com/d/1ddEYDEvbN7JkdbHhVH3qZJpmrVfho4_K",
+    "https://lh3.googleusercontent.com/d/1Zii6_ICc2wAMLWZAa4xRLIdlh4IDP8rv",
+    "https://lh3.googleusercontent.com/d/1Ok88GwZW_MLAkFjNlnuw3Exol-46YK7R",
   ];
 
   return (
@@ -846,7 +883,7 @@ const PhotoWall = () => {
       <div className="max-w-7xl mx-auto">
         <div className="mb-16 text-center">
           <h2 className="text-3xl font-bold text-white mb-2 glow-text">Visions of Us</h2>
-          <p className="text-pink-400 font-bold text-[10px] tracking-[0.4em] uppercase">Hover to illuminate</p>
+          <p className="text-pink-400 font-bold text-[10px] tracking-[0.4em] uppercase">Click memory to zoom</p>
         </div>
 
         <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
@@ -855,8 +892,9 @@ const PhotoWall = () => {
               key={i}
               className="glass p-3 photo-card group overflow-hidden rounded-[24px] cursor-pointer"
               style={{ rotate: i % 2 === 0 ? '-3deg' : '3deg' }}
-              whileHover={{ rotate: 0, scale: 1.05, zIndex: 50 }}
+              whileHover={{ rotate: 0, scale: 1.02, zIndex: 50 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              onClick={() => setSelectedImage(url)}
             >
               <div className="relative aspect-[4/5] rounded-[16px] overflow-hidden bg-rose-900/20">
                 <img 
@@ -875,6 +913,40 @@ const PhotoWall = () => {
           ))}
         </div>
       </div>
+
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[600] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-12"
+            onClick={() => setSelectedImage(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              onClick={e => e.stopPropagation()}
+              className="relative max-w-5xl w-full h-full flex flex-col items-center justify-center"
+            >
+               <button 
+                onClick={() => setSelectedImage(null)}
+                className="absolute top-0 right-0 z-[70] w-14 h-14 bg-white/10 text-white rounded-full flex flex-col items-center justify-center hover:bg-white/20 transition-all backdrop-blur-md gap-1 group"
+              >
+                <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                <span className="text-[8px] font-bold uppercase">Back</span>
+              </button>
+
+              <img 
+                src={selectedImage} 
+                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl border border-white/10"
+                alt="Enlarged Memory"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
@@ -883,9 +955,9 @@ const TarotSection = () => {
   const [revealed, setRevealed] = useState<string | null>(null);
 
   const cards = [
-    { id: 'komal', name: 'Komal Dii', arcana: 'The Empress', icon: '👑', desc: 'The sovereign of wisdom and nurturing. You made college feel like a sanctuary.', color: 'from-pink-500 to-rose-600', img: "https://picsum.photos/seed/tarot1/400/600" },
-    { id: 'diksha', name: 'Diksha', arcana: 'The Star', icon: '✨', desc: 'The light of guidance and hope. Your presence turned every struggle into a story.', color: 'from-rose-400 to-pink-400', img: "https://picsum.photos/seed/tarot2/400/600" },
-    { id: 'sargam', name: 'Sargam', arcana: 'The Sun', icon: '☀️', desc: 'The source of vitality and joy. Your energy was the caffeine we actually needed.', color: 'from-fuchsia-500 to-pink-500', img: "https://picsum.photos/seed/tarot3/400/600" }
+    { id: 'komal', name: 'Sargam dii', arcana: 'The priestess', icon: '👑', desc: 'The sovereign of wisdom and nurturing. You made college feel like a sanctuary.', color: 'from-pink-500 to-rose-600', img: "https://lh3.googleusercontent.com/d/16yGNFtWpQ4lwdWetQcBpPWfaMV5wHnSq" },
+    { id: 'diksha', name: 'komal dii;', arcana: 'The chariot', icon: '✨', desc: 'The light of guidance and hope. Your presence turned every struggle into a story.', color: 'from-rose-400 to-pink-400', img: "https://lh3.googleusercontent.com/d/1BmqhbF6MzftMR1zJaTv7gGumUcBVzkgZ" },
+    { id: 'sargam', name: 'Diksha dii', arcana: 'The saviour', icon: '☀️', desc: 'The source of vitality and joy. Your energy was the caffeine we actually needed.', color: 'from-fuchsia-500 to-pink-500', img: "https://lh3.googleusercontent.com/d/1BR56Njd1uSz6SBfBzlF5UuTLkiZ0Pw2C" }
   ];
 
   return (
@@ -1248,12 +1320,20 @@ const NewsFlash = () => {
                     {legend.name}
                   </motion.button>
                 ))}
-                <button 
+                
+                <motion.button 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   onClick={() => setShowNames(false)}
-                  className="w-full mt-12 text-[10px] text-white/40 uppercase tracking-[0.8em] font-bold hover:text-white transition-colors"
+                  className="w-full mt-12 flex flex-col items-center gap-3 group"
                 >
-                  Close Newsflash
-                </button>
+                  <div className="w-12 h-12 rounded-full glass border border-white/10 flex items-center justify-center text-white/40 group-hover:text-pink-400 group-hover:border-pink-400/50 transition-all">
+                    <ArrowLeft size={20} />
+                  </div>
+                  <span className="text-[10px] text-white/40 uppercase tracking-[0.8em] font-bold group-hover:text-white transition-colors">
+                    Back to Cover
+                  </span>
+                </motion.button>
               </motion.div>
             )}
           </AnimatePresence>
@@ -1435,6 +1515,16 @@ export default function App() {
     restDelta: 0.001
   });
 
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleGlobalClick = (e: React.MouseEvent) => {
     const newHeart = { id: Date.now(), x: e.clientX, y: e.clientY };
     setHeartParticles(prev => [...prev, newHeart]);
@@ -1512,6 +1602,22 @@ export default function App() {
         <motion.div className="fixed top-0 left-0 right-0 h-1 bg-pink-500/50 origin-left z-[100]" style={{ scaleX }} />
       )}
 
+      {/* Back to Top */}
+      <AnimatePresence>
+        {scene === 'journey' && showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="fixed bottom-24 left-6 z-[100] w-14 h-14 rounded-full glass border border-pink-500/30 flex flex-col items-center justify-center text-pink-400 hover:text-white hover:border-pink-500 transition-all shadow-[0_0_30px_rgba(236,72,153,0.3)] group"
+            title="Back to Top"
+          >
+            <ArrowUp size={20} className="group-hover:-translate-y-1 transition-transform" />
+            <span className="text-[8px] font-bold uppercase tracking-tighter mt-1">Top</span>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence mode="wait">
         {scene === 'landing' ? (
